@@ -119,11 +119,21 @@ opener = 'crane'
 if __name__ == "__main__":
 
     pr = input(f'pattern ({opener})>> ')
-    print('matching...')
+    print('matching and compiling...')
     wordsN = sortW(typed.List(wordsG), pr, opener)
     for score in range(1, 6):
         r = sortByInformation(wordsN)
+
+        if len(r) == 0:
+            print('There are no more options')
+            exit()
+
         pw = [e[0] for e in sortByFreqAndEI(r, score)]
+
+        if len(pw) == 1:
+            print(f'the answer is definitely: {pw[0]}')
+            exit()
+
         print('preferred words: ', *pw)
         wordsN = list([e[0] for e in r])
         print(f'possible words: {", ".join(wordsN)}', f'best guess: {wordsN[0]}', f'suggested answer: {pw[0]}',
