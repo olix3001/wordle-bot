@@ -53,7 +53,7 @@ def matchPattern(pattern, word):
     return True
 
 
-@njit
+@njit()
 def genPattern(pattern, word):
     p = [
         ['', '', '', '', ''],
@@ -61,9 +61,14 @@ def genPattern(pattern, word):
         ['*'],
         ['', '', '', '', '']
     ]
+    po = []
 
     i = 0
     for l in pattern:
+        if word[i] in po:
+            i += 1
+            continue
+        po.append(word[i])
         if l == '2':
             p[0][i] = word[i]
         elif l == '1':
@@ -188,7 +193,7 @@ if __name__ == "__main__":
 
         r = None
 
-        if lastword in w_memo and pr in w_memo[lastword]:
+        if score == 1 and lastword in w_memo and pr in w_memo[lastword]:
             print('pattern found in memory!')
             r = w_memo[lastword][pr]
         else:
@@ -209,11 +214,12 @@ if __name__ == "__main__":
         print(f'possible words: {", ".join(wordsN)}', f'best guess: {wordsN[0]}', f'suggested answer: {pw[0]}',
               sep='\n')
 
-        if not lastword in w_memo:
-            w_memo[lastword] = {}
-        w_memo[lastword][pr] = r
-        with open('./words_memory.json', 'w') as f:
-            json.dump(w_memo, f)
+        if score == 1:
+            if not lastword in w_memo:
+                w_memo[lastword] = {}
+            w_memo[lastword][pr] = r
+            with open('./words_memory.json', 'w') as f:
+                json.dump(w_memo, f)
 
         print(str(len(wordsN)) + '/' + str(wordC))
         sw = input('selected word >> ')
